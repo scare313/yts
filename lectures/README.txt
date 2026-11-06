@@ -1,0 +1,3 @@
+Put lecture transcripts here: L01_transcript.txt, L02_transcript.txt …
+Get one with:  youtube_transcript_api VIDEO_ID --languages hi en --format text > lectures\L01_transcript.txt
+(install once with:  pip install youtube-transcript-api)

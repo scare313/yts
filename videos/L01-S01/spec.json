@@ -1,0 +1,78 @@
+{
+  "meta": {"id": "L01-S01", "title": "3,000 vs 50,000: प्लासी की असली हार किसकी थी?", "format": "short", "lang": "hi", "captions": true, "loop": true,
+           "end_card": "अगली कहानी: पानीपत 1761"},
+  "characters": {
+    "siraj": {"type": "nawab", "label": "नवाब सिराजुद्दौला"},
+    "clive": {"type": "british_officer", "label": "रॉबर्ट क्लाइव"},
+    "mirjafar": {"type": "general", "coat": "#24452f", "label": "मीर जाफ़र"},
+    "seth": {"type": "merchant", "coat": "#e8e2d0", "turban": "#c0607a"},
+    "agent": {"type": "british_soldier"}
+  },
+  "thumbnail": {"scene": 1, "text": "3,000 vs 50,000", "sub": "प्लासी का असली राज़", "year": 1757, "at": 0.9},
+  "scenes": [
+    {"id": 1, "narration": "सिर्फ़ तीन हज़ार सैनिक…", "caption": "सिर्फ़ 3,000 सैनिक…", "keyword": "3,000",
+     "title": "प्लासी 1757", "setting": "battlefield", "time": "storm", "camera": "swoop_down", "focus": "brit",
+     "elements": [
+       {"type": "army", "id": "brit", "faction": "british", "size": "small", "pos": "left", "cannons": 3},
+       {"type": "army", "faction": "nawab", "size": "huge", "pos": "far_right", "elephants": true, "cavalry": true, "banners": true}
+     ], "fx": ["lightning"]},
+    {"id": 2, "narration": "और सामने पचास हज़ार की सेना। फिर भी जीत किसकी हुई?", "caption": "और सामने 50,000 की सेना। फिर भी जीत किसकी हुई?", "keyword": "50,000",
+     "setting": "card", "card": {"vs": ["3,000", "50,000"], "vs_labels": ["अंग्रेज़", "नवाब"]}},
+    {"id": 3, "narration": "तेईस जून, सत्रह सौ सत्तावन। बंगाल का प्लासी। एक तरफ़ नवाब सिराजुद्दौला… दूसरी तरफ़ ईस्ट इंडिया कंपनी का रॉबर्ट क्लाइव।",
+     "caption": "23 जून 1757। बंगाल का प्लासी। एक तरफ़ नवाब सिराजुद्दौला… दूसरी तरफ़ ईस्ट इंडिया कंपनी का रॉबर्ट क्लाइव।", "keyword": ["प्लासी", "क्लाइव"],
+     "year": 1757, "setting": "map", "camera": "push_in",
+     "map": {"places": [
+        {"id": "murshidabad", "name": "मुर्शिदाबाद", "lat": 24.18, "lon": 88.27},
+        {"id": "calcutta", "name": "कलकत्ता", "lat": 22.57, "lon": 88.36},
+        {"id": "plassey", "name": "प्लासी", "lat": 23.80, "lon": 88.25, "highlight": true}],
+       "rivers": [{"name": "भागीरथी", "points": [[24.6, 88.1], [24.18, 88.22], [23.8, 88.2], [23.3, 88.3], [22.9, 88.35], [22.57, 88.33], [22.0, 88.1]]}],
+       "routes": [{"from": "calcutta", "to": "plassey", "color": "red", "label": "क्लाइव"}, {"from": "murshidabad", "to": "plassey", "color": "#2e4f9e", "label": "नवाब"}],
+       "focus": "plassey"}},
+    {"id": 4, "narration": "कागज़ पर ये लड़ाई एकतरफ़ा थी। लेकिन असली लड़ाई मैदान में नहीं… बंद कमरों में पहले ही लड़ी जा चुकी थी।",
+     "caption": "कागज़ पर ये लड़ाई एकतरफ़ा थी। लेकिन असली लड़ाई मैदान में नहीं… बंद कमरों में पहले ही लड़ी जा चुकी थी।", "keyword": "बंद कमरों",
+     "title": "असली लड़ाई?", "setting": "room", "time": "night", "camera": "push_in", "focus": "center",
+     "elements": [
+       {"type": "prop", "name": "table", "pos": "center"}, {"type": "prop", "name": "letter", "pos": "center"},
+       {"type": "prop", "name": "coins", "pos": [-3.5, 0.5]}, {"type": "prop", "name": "candle", "pos": [4.5, -1.7]},
+       {"type": "character", "character": "seth", "pos": [0, -6.5], "action": "gesture"},
+       {"type": "character", "character": "agent", "pos": [7, 2.8], "action": "point"},
+       {"type": "character", "character": "mirjafar", "pos": [-7, 2.5], "action": "nod"}
+     ]},
+    {"id": 5, "narration": "नवाब के सेनापति मीर जाफ़र ने अंग्रेज़ों से गुप्त सौदा कर लिया था। साथ न देने के बदले… बंगाल की गद्दी।",
+     "caption": "नवाब के सेनापति मीर जाफ़र ने अंग्रेज़ों से गुप्त सौदा कर लिया था। साथ न देने के बदले… बंगाल की गद्दी।", "keyword": ["गुप्त सौदा", "गद्दी"],
+     "name_card": {"name": "मीर जाफ़र", "role": "नवाब का सेनापति", "years": "1691–1765"},
+     "setting": "tent", "time": "night", "camera": "close_up", "focus": "mirjafar",
+     "shots": [{"at": 0, "camera": "close_up", "focus": "mirjafar"}, {"at": 0.45, "camera": "orbit", "zoom": 0.8}, {"at": 0.75, "camera": "close_up", "focus": "mirjafar"}],
+     "elements": [{"type": "character", "character": "mirjafar", "pos": "center", "face": "camera", "action": "hold_letter"}]},
+    {"id": 6, "narration": "दोपहर में अचानक बारिश हुई। अंग्रेज़ों ने अपना बारूद तिरपाल से ढक लिया… और नवाब का बारूद भीग गया।",
+     "caption": "दोपहर में अचानक बारिश हुई। अंग्रेज़ों ने अपना बारूद तिरपाल से ढक लिया… और नवाब का बारूद भीग गया।", "keyword": ["बारिश", "भीग गया"],
+     "title": "भीगा बारूद", "setting": "battlefield", "time": "storm", "camera": "pan_right", "focus": "center", "zoom": 0.8,
+     "elements": [
+       {"type": "prop", "name": "barrel", "pos": [-6, 1], "count": 6, "spread": 1.5},
+       {"type": "prop", "name": "cannon", "pos": [-4, 4], "count": 2, "spread": 2},
+       {"type": "character", "character": "agent", "pos": [-7, 3], "action": "walk", "face": "left"},
+       {"type": "prop", "name": "cannon", "pos": [6, 0], "count": 4, "spread": 3},
+       {"type": "army", "faction": "nawab", "size": "tiny", "pos": [8, -2]}
+     ], "fx": ["rain", "lightning"]},
+    {"id": 7, "narration": "और जब नवाब को सबसे ज़्यादा ज़रूरत थी… मीर जाफ़र की टुकड़ियाँ बस खड़ी देखती रहीं। कुछ ही घंटों में खेल ख़त्म।",
+     "caption": "और जब नवाब को सबसे ज़्यादा ज़रूरत थी, मीर जाफ़र की टुकड़ियाँ बस खड़ी देखती रहीं। कुछ ही घंटों में खेल ख़त्म।", "keyword": ["खड़ी देखती रहीं"],
+     "title": "धोखा", "title_style": "red", "setting": "hills", "time": "storm", "camera": "wide", "focus": "mj",
+     "shots": [{"at": 0, "camera": "low_angle", "focus": "mj"}, {"at": 0.4, "camera": "close_up", "focus": "mj"}, {"at": 0.75, "camera": "aerial"}],
+     "freeze": {"at": 0.45, "for": 1.0, "label": "मीर जाफ़र: बस देखते रहे", "target": "mj"},
+     "elements": [
+       {"type": "character", "id": "mj", "character": "mirjafar", "pos": [-6, 3], "mounted": true, "face": "right"},
+       {"type": "cavalry", "faction": "mughal", "size": "medium", "pos": [-14, 0], "face": "right"},
+       {"type": "army", "id": "fleeing", "faction": "nawab", "size": "medium", "pos": "far_right", "motion": "retreat", "face": "left"},
+       {"type": "army", "faction": "british", "size": "small", "pos": "right", "motion": "advance", "face": "right"},
+       {"type": "arrow", "from": [12, 2], "to": [28, -6], "label": "बिखरती सेना", "at": 0.2}
+     ], "fx": ["smoke", "desaturate"]},
+    {"id": 8, "narration": "उस दिन एक व्यापारी कंपनी ने भारत पर राज की पहली सीढ़ी चढ़ ली। तो प्लासी किसने हारी… नवाब ने, या धोखे ने?",
+     "caption": "उस दिन एक व्यापारी कंपनी ने भारत पर राज की पहली सीढ़ी चढ़ ली। तो प्लासी किसने हारी — नवाब ने, या धोखे ने?", "keyword": ["पहली सीढ़ी", "धोखे"],
+     "title": "नवाब हारे या धोखा जीता?", "title_style": "red", "setting": "battlefield", "time": "golden", "camera": "pull_out", "focus": "clive",
+     "elements": [
+       {"type": "character", "character": "clive", "pos": "center", "face": "back", "action": "point"},
+       {"type": "flag", "style": "eic", "pos": [1.2, 0.3]},
+       {"type": "prop", "name": "cannon", "pos": "back", "count": 6, "spread": 10}
+     ], "fx": ["smoke"]}
+  ]
+}

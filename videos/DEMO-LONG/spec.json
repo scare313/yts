@@ -1,0 +1,417 @@
+{
+ "meta": {
+  "id": "DEMO-LONG",
+  "title": "Engine demo — every scene type",
+  "format": "long",
+  "lang": "hi",
+  "channel": "",
+  "captions": false
+ },
+ "characters": {
+  "aurangzeb": {
+   "type": "emperor",
+   "label": "औरंगज़ेब"
+  },
+  "shivaji": {
+   "type": "maratha_warrior",
+   "turban": "saffron",
+   "label": "छत्रपति शिवाजी"
+  },
+  "minister": {
+   "type": "minister"
+  },
+  "sage": {
+   "type": "sage",
+   "label": "ऋषि"
+  },
+  "officer": {
+   "type": "british_officer"
+  },
+  "leader": {
+   "type": "freedom_fighter",
+   "label": "नेता"
+  },
+  "woman": {
+   "type": "woman",
+   "coat": "#2f6b5a"
+  }
+ },
+ "thumbnail": {
+  "scene": 4,
+  "text": "मराठा vs मुग़ल\nएक किला",
+  "sub": "सौ साल की जंग",
+  "year": 1707
+ },
+ "scenes": [
+  {
+   "id": 1,
+   "chapter": "अध्याय 1 • दरबार",
+   "narration": "सत्रह सौ सात। दिल्ली का दरबार।",
+   "caption": "1707। दिल्ली का दरबार।",
+   "title": "मुग़ल दरबार",
+   "setting": "court",
+   "camera": "push_in",
+   "focus": "aurangzeb",
+   "elements": [
+    {
+     "type": "prop",
+     "name": "throne",
+     "pos": "back"
+    },
+    {
+     "type": "character",
+     "character": "aurangzeb",
+     "pos": "back",
+     "action": "sit",
+     "face": "camera"
+    },
+    {
+     "type": "character",
+     "character": "minister",
+     "pos": "front_left",
+     "action": "bow",
+     "face": "back"
+    },
+    {
+     "type": "crowd",
+     "size": "small",
+     "pos": "left"
+    }
+   ],
+   "labels": true,
+   "year": 1707,
+   "name_card": {
+    "name": "औरंगज़ेब",
+    "role": "मुग़ल बादशाह",
+    "years": "1618–1707"
+   },
+   "keyword": "दरबार"
+  },
+  {
+   "id": 2,
+   "narration": "दक्कन तक फैला साम्राज्य।",
+   "setting": "map",
+   "camera": "push_in",
+   "title": "साम्राज्य",
+   "map": {
+    "places": [
+     {
+      "id": "delhi",
+      "name": "दिल्ली",
+      "lat": 28.61,
+      "lon": 77.21,
+      "highlight": true
+     },
+     {
+      "id": "raigad",
+      "name": "रायगढ़",
+      "lat": 18.23,
+      "lon": 73.44
+     },
+     {
+      "id": "agra",
+      "name": "आगरा",
+      "lat": 27.18,
+      "lon": 78.01
+     }
+    ],
+    "areas": [
+     {
+      "label": "मराठा क्षेत्र",
+      "lat": 18.5,
+      "lon": 74.5,
+      "radius_km": 220,
+      "color": "saffron"
+     }
+    ],
+    "routes": [
+     {
+      "from": "delhi",
+      "to": "raigad",
+      "color": "#2e4f9e",
+      "label": "मुग़ल सेना"
+     }
+    ],
+    "tokens": [
+     {
+      "at": "raigad",
+      "faction": "maratha"
+     }
+    ]
+   }
+  },
+  {
+   "id": 3,
+   "narration": "पहाड़ों में एक किला।",
+   "setting": "fort",
+   "time": "dawn",
+   "camera": "low_angle",
+   "title": "रायगढ़",
+   "elements": [
+    {
+     "type": "character",
+     "character": "shivaji",
+     "pos": "front",
+     "action": "raise_sword",
+     "face": "camera"
+    },
+    {
+     "type": "army",
+     "faction": "maratha",
+     "size": "medium",
+     "pos": "center",
+     "flag": "saffron",
+     "face": "camera"
+    }
+   ],
+   "fx": [
+    "dust"
+   ]
+  },
+  {
+   "id": 4,
+   "narration": "और फिर हमला।",
+   "setting": "hills",
+   "time": "dusk",
+   "camera": "aerial",
+   "title": "हमला",
+   "elements": [
+    {
+     "type": "army",
+     "faction": "maratha",
+     "size": "large",
+     "pos": "left",
+     "motion": "charge",
+     "banners": true
+    },
+    {
+     "type": "army",
+     "faction": "mughal",
+     "size": "large",
+     "pos": "right",
+     "elephants": true,
+     "cannons": 4
+    },
+    {
+     "type": "arrow",
+     "from": "left",
+     "to": "right",
+     "label": "मराठा हमला",
+     "at": 0.1
+    }
+   ],
+   "fx": [
+    "fire",
+    "smoke"
+   ]
+  },
+  {
+   "id": 5,
+   "narration": "समुद्र से आए व्यापारी।",
+   "setting": "coast",
+   "time": "golden",
+   "camera": "orbit",
+   "focus": "officer",
+   "elements": [
+    {
+     "type": "building",
+     "name": "ship",
+     "pos": "back",
+     "flag": "eic",
+     "rotate": 1.4
+    },
+    {
+     "type": "building",
+     "name": "ship",
+     "pos": "back_right",
+     "flag": "union",
+     "rotate": 1.2
+    },
+    {
+     "type": "character",
+     "character": "officer",
+     "pos": "center",
+     "action": "point",
+     "face": "camera"
+    },
+    {
+     "type": "prop",
+     "name": "crate",
+     "pos": "front_right",
+     "count": 5,
+     "spread": 2
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "narration": "गाँव में जीवन चलता रहा।",
+   "setting": "village",
+   "camera": "wide",
+   "elements": [
+    {
+     "type": "crowd",
+     "size": "medium",
+     "pos": "center"
+    },
+    {
+     "type": "building",
+     "name": "well",
+     "pos": "front_left"
+    },
+    {
+     "type": "prop",
+     "name": "cart",
+     "pos": "front_right"
+    },
+    {
+     "type": "character",
+     "character": "woman",
+     "pos": "front",
+     "action": "walk",
+     "face": "right"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "chapter": "अध्याय 2 • विरासत",
+   "narration": "मंदिर, ऋषि और परंपरा।",
+   "setting": "temple",
+   "time": "day",
+   "camera": "crane_up",
+   "focus": "sage",
+   "elements": [
+    {
+     "type": "character",
+     "character": "sage",
+     "pos": "front",
+     "action": "think",
+     "face": "camera"
+    },
+    {
+     "type": "prop",
+     "name": "lamp",
+     "pos": "front_left"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "narration": "समय की रेखा पर।",
+   "setting": "timeline",
+   "title": "टाइमलाइन",
+   "timeline": {
+    "events": [
+     {
+      "year": "1674",
+      "label": "राज्याभिषेक"
+     },
+     {
+      "year": "1707",
+      "label": "औरंगज़ेब की मृत्यु"
+     },
+     {
+      "year": "1757",
+      "label": "प्लासी"
+     },
+     {
+      "year": "1857",
+      "label": "विद्रोह"
+     }
+    ],
+    "focus": 2
+   }
+  },
+  {
+   "id": 9,
+   "narration": "सिर्फ़ पचास साल में।",
+   "caption": "सिर्फ़ 50 साल में।",
+   "setting": "card",
+   "card": {
+    "vs": [
+     "1707",
+     "1757"
+    ],
+    "vs_labels": [
+     "औरंगज़ेब की मृत्यु",
+     "प्लासी"
+    ],
+    "count": true
+   }
+  },
+  {
+   "id": 10,
+   "narration": "और आज़ादी की लड़ाई।",
+   "setting": "studio",
+   "color": "#2a1f1f",
+   "camera": "orbit",
+   "elements": [
+    {
+     "type": "character",
+     "character": "leader",
+     "pos": "center",
+     "action": "talk",
+     "face": "camera"
+    },
+    {
+     "type": "crowd",
+     "size": "small",
+     "pos": "back",
+     "colors": [
+      "white",
+      "cream"
+     ]
+    },
+    {
+     "type": "flag",
+     "style": "tricolour",
+     "pos": "left"
+    }
+   ],
+   "labels": true
+  },
+  {
+   "id": 11,
+   "narration": "रात का सन्नाटा।",
+   "setting": "room",
+   "time": "night",
+   "camera": "close_up",
+   "focus": "officer",
+   "elements": [
+    {
+     "type": "prop",
+     "name": "table",
+     "pos": "center"
+    },
+    {
+     "type": "prop",
+     "name": "book",
+     "pos": "center"
+    },
+    {
+     "type": "character",
+     "character": "officer",
+     "pos": [
+      0,
+      -6
+     ],
+     "action": "read",
+     "face": "camera"
+    }
+   ],
+   "fx": [
+    "rain"
+   ]
+  },
+  {
+   "id": 12,
+   "narration": "एक तस्वीर।",
+   "setting": "image",
+   "image": {
+    "file": "missing_example.png",
+    "motion": "zoom_in"
+   }
+  }
+ ]
+}

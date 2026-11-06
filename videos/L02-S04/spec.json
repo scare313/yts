@@ -1,0 +1,63 @@
+{
+  "meta": {"id": "L02-S04", "title": "1761: एक दिन में मराठों की पूरी पीढ़ी कैसे खो गई?", "format": "short", "lang": "hi", "channel": "", "captions": true},
+  "characters": {
+    "bhau": {"type": "maratha_warrior", "turban": "saffron", "sash": "gold", "plume": true, "label": "सदाशिवराव भाऊ"},
+    "abdali": {"type": "afghan_warrior", "coat": "#2b2b33", "turban": "#111111", "plume": "gold", "label": "अहमद शाह अब्दाली"},
+    "soldier": {"type": "maratha_warrior"}
+  },
+  "thumbnail": {"scene": 1, "text": "पानीपत 1761", "sub": "एक दिन, एक पीढ़ी", "at": 0.85},
+  "missing_assets": [],
+  "scenes": [
+    {"id": 1, "narration": "चौदह जनवरी, सत्रह सौ इकसठ। एक ही दिन में… मराठों की लगभग पूरी एक पीढ़ी मैदान में रह गई।",
+     "caption": "14 जनवरी 1761। एक ही दिन में… मराठों की लगभग पूरी एक पीढ़ी मैदान में रह गई।",
+     "title": "पानीपत 1761", "setting": "battlefield", "time": "dawn", "camera": "swoop_down", "focus": "marathas",
+     "elements": [
+       {"type": "army", "id": "marathas", "faction": "maratha", "size": "large", "pos": "left", "banners": true, "cannons": 4},
+       {"type": "army", "faction": "afghan", "size": "huge", "pos": "far_right", "cavalry": true}
+     ], "fx": ["dust", "flash"], "transition": "cut"},
+    {"id": 2, "narration": "पुणे से हज़ार किलोमीटर से भी ज़्यादा दूर, दिल्ली के उत्तर में… पानीपत।",
+     "caption": "पुणे से 1,000 किमी से भी ज़्यादा दूर, दिल्ली के उत्तर में… पानीपत।",
+     "title": "पुणे ➜ पानीपत", "setting": "map", "camera": "push_in",
+     "map": {"places": [
+        {"id": "pune", "name": "पुणे", "lat": 18.52, "lon": 73.86},
+        {"id": "delhi", "name": "दिल्ली", "lat": 28.61, "lon": 77.21},
+        {"id": "panipat", "name": "पानीपत", "lat": 29.39, "lon": 76.97, "highlight": true},
+        {"id": "kandahar", "name": "कंधार", "lat": 31.61, "lon": 65.71}],
+       "routes": [{"from": "pune", "to": "panipat", "color": "saffron", "label": "मराठा सेना"}, {"from": "kandahar", "to": "panipat", "color": "#2b2b33", "label": "अब्दाली"}],
+       "tokens": [{"at": "panipat", "faction": "maratha"}]}},
+    {"id": 3, "narration": "दो महीने तक मराठा सेना अपने ही शिविर में घिरी रही। रसद कटी… और भूख बढ़ती गई।",
+     "caption": "2 महीने तक मराठा सेना अपने ही शिविर में घिरी रही। रसद कटी… और भूख बढ़ती गई।",
+     "title": "घेराबंदी", "setting": "field", "time": "night", "camera": "pan_right",
+     "elements": [
+       {"type": "building", "name": "tent", "pos": "back_left", "flag": "saffron"},
+       {"type": "building", "name": "tent", "pos": "back_right", "flag": "saffron"},
+       {"type": "prop", "name": "campfire", "pos": "center"},
+       {"type": "character", "character": "soldier", "pos": [-2, 1], "action": "defeated", "face": "right"},
+       {"type": "character", "character": "soldier", "pos": [2, 1.5], "action": "look_down", "face": "left"},
+       {"type": "crowd", "size": "small", "pos": "back", "colors": ["#f2e6d0", "#e07a1f"]}
+     ], "fx": ["fog", "embers"]},
+    {"id": 4, "narration": "भाऊ ने फ़ैसला किया — भूख से मरने से अच्छा है, लड़कर मरना।",
+     "caption": "भाऊ ने फ़ैसला किया — भूख से मरने से अच्छा है, लड़कर मरना।",
+     "title": "फ़ैसला", "setting": "tent", "time": "night", "camera": "close_up", "focus": "bhau", "color": "#8a4a1a",
+     "elements": [{"type": "character", "character": "bhau", "pos": "center", "face": "camera", "action": "turn_to_camera"}]},
+    {"id": 5, "narration": "सुबह मराठा तोपखाने ने कहर बरपाया। दोपहर तक पलड़ा मराठों के पक्ष में लग रहा था।",
+     "caption": "सुबह मराठा तोपखाने ने कहर बरपाया। दोपहर तक पलड़ा मराठों के पक्ष में लग रहा था।",
+     "title": "पलड़ा भारी", "setting": "battlefield", "time": "day", "camera": "aerial",
+     "elements": [
+       {"type": "army", "faction": "maratha", "size": "large", "pos": "left", "motion": "charge", "banners": true},
+       {"type": "army", "faction": "afghan", "size": "large", "pos": "right", "motion": "retreat"},
+       {"type": "prop", "name": "cannon", "pos": "far_left", "count": 6, "spread": 6}
+     ], "fx": ["smoke"]},
+    {"id": 6, "narration": "फिर अब्दाली ने अपनी ताज़ा आरक्षित टुकड़ियाँ झोंक दीं। थकी, भूखी मराठा सेना… बिखर गई।",
+     "caption": "फिर अब्दाली ने अपनी ताज़ा आरक्षित टुकड़ियाँ झोंक दीं। थकी, भूखी मराठा सेना… बिखर गई।",
+     "title": "पासा पलटा", "setting": "battlefield", "time": "dusk", "camera": "low_angle", "focus": "abdali",
+     "elements": [
+       {"type": "character", "id": "abdali", "character": "abdali", "pos": "center", "mounted": true, "face": "left"},
+       {"type": "cavalry", "faction": "afghan", "size": "large", "pos": "right", "motion": "charge", "face": "left"},
+       {"type": "army", "faction": "maratha", "size": "medium", "pos": "far_left", "motion": "retreat", "face": "right"}
+     ], "fx": ["dust", "smoke", "desaturate"]},
+    {"id": 7, "narration": "पानीपत के बाद मराठे फिर उठे… पर इस खालीपन का सबसे बड़ा फ़ायदा किसने उठाया? सोचिए।",
+     "caption": "पानीपत के बाद मराठे फिर उठे… पर इस खालीपन का सबसे बड़ा फ़ायदा किसने उठाया? सोचिए।",
+     "title": "फ़ायदा किसे?", "setting": "timeline", "timeline": {"events": [{"year": "1757", "label": "प्लासी"}, {"year": "1761", "label": "पानीपत"}, {"year": "1764", "label": "बक्सर"}], "focus": 2}}
+  ]
+}
