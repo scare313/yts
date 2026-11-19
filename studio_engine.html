@@ -112,6 +112,7 @@ const V = (x, y, z) => new THREE.Vector3(x, y, z);
 const col = c => { if (typeof c === 'number') return c; if (typeof c === 'string') { const n = NAMED[c.toLowerCase()]; if (n !== undefined) return n; if (/^#?[0-9a-f]{6}$/i.test(c)) return parseInt(c.replace('#', ''), 16); } return undefined; };
 const NAMED = { red: 0xc62828, maroon: 0x7a1f1f, crimson: 0xb3261e, saffron: 0xe07a1f, orange: 0xef6c00, yellow: 0xf2c230, gold: 0xd4a017, green: 0x2f7d3a, darkgreen: 0x24452f, blue: 0x2a5aa8, navy: 0x1f3a7a, purple: 0x5a3a8a, white: 0xf2efe6, black: 0x1a1a1a, grey: 0x8a8a8a, gray: 0x8a8a8a, brown: 0x6b4a2b, pink: 0xc0607a, teal: 0x2f6b6b, cream: 0xf3ead2, olive: 0x55603a };
 
+const shade = (c, k) => { const f = v => Math.max(0, Math.min(255, Math.round(v * k))); return (f((c >> 16) & 255) << 16) | (f((c >> 8) & 255) << 8) | f(c & 255); };
 const _g = {}, _m = {};
 const G = {
   box: (...a) => _g['b' + a] || (_g['b' + a] = new THREE.BoxGeometry(...a)),
@@ -164,7 +165,9 @@ const CHAR_TYPES = {
   woman: { robe: 1, coat: 0xb03060, hat: 'headscarf', scarf: 0xe0b040 },
   freedom_fighter: { robe: 1, coat: 0xf2efe6, hat: 'cap', capColor: 0xf7f7f2, legs: 0xf2efe6 },
   leader: { robe: 1, coat: 0xf2efe6, vest: 0x6b5a3a, hat: 'none', hair: 0x222222, legs: 0xf2efe6 },
-  modern_soldier: { coat: 0x55603a, hat: 'helmet', helmet: 0x4a5530, musket: 1, legs: 0x4a5530 },
+  modern_soldier: { coat: 0x55603a, hat: 'helmet', helmet: 0x4a5530, rifle: 1, legs: 0x4a5530 },
+  pla_soldier: { coat: 0x8a8450, quilted: 1, hat: 'fur_cap', capColor: 0x6b5a48, legs: 0x77723f, skin: 'east_asian', rifle: 1 },
+  pla_officer: { coat: 0x7d7847, quilted: 1, hat: 'fur_cap', capColor: 0x4f4538, sash: 0x9a2a22, legs: 0x6b673a, skin: 'east_asian' },
   officer_suit: { coat: 0x2a2d36, hat: 'none', hair: 0x1a1a1a, legs: 0x2a2d36 },
   scientist: { coat: 0xf2f2f2, hat: 'none', hair: 0x1a1a1a, legs: 0x3a3a44 },
   child: { coat: 0xd8a040, hat: 'none', hair: 0x222222, s: 0.7 },
@@ -177,6 +180,7 @@ const FACTIONS = {
   afghan: { coat: 0x3a3530, hat: 'turban', turban: 0x111111, spear: 1, beard: 0x222222, skin: 'afghan' }, mysore: { coat: 0x6b3a1e, hat: 'turban', turban: 0xd9a441, musket: 1 },
   ancient: 'ancient_warrior', greek: 'greek_soldier', modern_indian: 'modern_soldier', modern: 'modern_soldier', generic: { coat: 0x7a6a5a, hat: 'turban', turban: 0xe8e2d4, spear: 1 },
   rebels: { coat: 0xe8e2d0, hat: 'turban', turban: 0xe8e2d4, spear: 1 }, civilians: 'villager',
+  pla: 'pla_soldier', chinese: 'pla_soldier',
 };
 const ARMY_SIZES = { tiny: [2, 5], small: [4, 9], medium: [8, 14], large: [14, 24], huge: [24, 34] };
 
@@ -206,6 +210,7 @@ function person(o = {}) {
   else body.add(mesh(G.box(0.54, 0.78, 0.32), M(coat), 0, 1.08, 0));
   if (o.vest) body.add(mesh(G.box(0.5, 0.6, 0.36), M(o.vest), 0, 1.15, 0));
   if (o.sash) body.add(o.robe ? mesh(G.cyl(0.31, 0.33, 0.1, 6), M(o.sash), 0, 1.1, 0) : mesh(G.box(0.57, 0.1, 0.35), M(o.sash), 0, 0.98, 0));
+  if (o.quilted && !o.robe) for (let i = 0; i < 3; i++) body.add(mesh(G.box(0.56, 0.05, 0.34), M(shade(coat, 0.78)), 0, 0.82 + i * 0.26, 0));
   const arm = side => {
     const p = new THREE.Group(); p.position.set(side * 0.36, 1.42, 0);
     p.add(mesh(G.box(0.15, 0.62, 0.17), M(coat), 0, -0.3, 0));
@@ -234,6 +239,12 @@ function person(o = {}) {
     head.add(mesh(G.cone(0.26, 0.38, 6), M(o.helmet ?? 0x8a8f96, { metalness: .4, roughness: .5 }), 0, 0.46, 0));
   } else if (hat === 'cap') {
     head.add(mesh(G.box(0.36, 0.12, 0.24), M(o.capColor ?? 0xf7f7f2), 0, 0.4, 0));
+  } else if (hat === 'fur_cap') {
+    const fc = o.capColor ?? 0x6b5a48, fm = M(fc, { roughness: 1 });
+    head.add(mesh(G.cyl(0.235, 0.25, 0.2, 7), fm, 0, 0.37, 0));
+    const top = mesh(G.ico(0.2, 0), fm, 0, 0.47, 0); top.scale.y = 0.6; head.add(top);
+    for (const s of [-1, 1]) head.add(mesh(G.box(0.07, 0.22, 0.2), fm, s * 0.23, 0.2, 0));
+    const badge = mesh(G.box(0.07, 0.07, 0.03), M(0xc8102e), 0, 0.4, 0.25); badge.rotation.z = Math.PI / 4; head.add(badge);
   } else if (hat === 'headscarf') {
     const s = mesh(G.cone(0.3, 0.6, 7), M(o.scarf ?? 0xe0b040), 0, 0.32, -0.02); head.add(s);
     head.add(mesh(G.box(0.4, 0.6, 0.08), M(o.scarf ?? 0xe0b040), 0, 0.05, -0.2));
@@ -243,12 +254,27 @@ function person(o = {}) {
   if (o.hair && hat === 'none') head.add(mesh(G.box(0.36, 0.14, 0.36), M(o.hair), 0, 0.34, -0.02));
   if (o.beard) head.add(mesh(G.box(0.26, 0.2, 0.14), M(o.beard), 0, 0.05, 0.13));
   if (o.musket) body.add(mesh(G.box(0.05, 1.05, 0.05), M(0x3b2a1a), 0.3, 1.18, 0.07));
+  if (o.rifle) { body.add(mesh(G.box(0.055, 0.6, 0.07), M(0x5a3d22), 0.3, 0.95, 0.07)); body.add(mesh(G.box(0.032, 0.52, 0.032), M(0x2b2f33, { metalness: .6, roughness: .4 }), 0.3, 1.5, 0.07)); }
   if (o.spear) { body.add(mesh(G.box(0.04, 2.2, 0.04), M(0x5a4630), 0.33, 1.1, 0.05)); body.add(mesh(G.cone(0.06, 0.22, 4), M(0xcfd3d6, { metalness: .4 }), 0.33, 2.3, 0.05)); }
   let sword = null;
   if (o.sword) { sword = mesh(G.box(0.05, 0.75, 0.05), M(0xc9ccd0, { metalness: .6, roughness: .35 }), -0.33, 0.78, 0.12); sword.rotation.z = -0.35; body.add(sword); }
   if (o.s) g.scale.setScalar(o.s);
   g.body = body; g.armL = armL; g.armR = armR; g.head = head; g.sword = sword; g.look = o;
   return g;
+}
+function snowRock(r) { // dark boulder with a snow cap
+  const g = new THREE.Group(), s = 0.9 + r() * 1.4, ry = r() * 6;
+  const b = mesh(G.ico(1, 0), M([0x6b7078, 0x5f646b, 0x777c83][Math.floor(r() * 3)]), 0, 0.5 * s, 0); b.scale.set(s * 1.2, s * 0.8, s); b.rotation.y = ry; g.add(b);
+  const cap = mesh(G.ico(0.85, 0), M(0xeef3f8), 0, 1.0 * s, 0); cap.scale.set(s * 1.05, s * 0.34, s * 0.9); cap.rotation.y = ry; g.add(cap);
+  return g;
+}
+const _frostCache = new Map();
+function frostify(p) { // a figure rimed with frost: tinted cloth plus snow on the head and shoulders. No injury, no bodies.
+  p.traverse(o => { if (!o.isMesh) return; let fm = _frostCache.get(o.material); if (!fm) { fm = o.material.clone(); fm.color.lerp(new THREE.Color(0xdfeaf5), 0.55); _frostCache.set(o.material, fm); } o.material = fm; });
+  const snow = M(0xf4f8fc), top = { turban: 0.6, tricorne: 0.52, tophat: 0.78, crown: 0.6, helmet: 0.66, cap: 0.48, fur_cap: 0.6, none: 0.42 }[p.look.hat || 'none'] ?? 0.55;
+  const cap = mesh(G.ico(0.2, 0), snow, 0, top, 0); cap.scale.y = 0.4; p.head.add(cap);
+  for (const s of [-1, 1]) p.body.add(mesh(G.box(0.2, 0.07, 0.34), snow, s * 0.3, 1.5, 0));
+  p.body.add(mesh(G.box(0.42, 0.06, 0.2), snow, 0, 1.49, -0.08));
 }
 function horse(color = 0x5b3a22) {
   const g = new THREE.Group(), m = M(color), d = M(0x2a2018);
@@ -290,6 +316,13 @@ function flagTexture(style) {
       stripes(['#ff9933', '#ffffff', '#138808']); x.strokeStyle = '#000080'; x.lineWidth = 3; x.beginPath(); x.arc(130, 80, 20, 0, 7); x.stroke();
       for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2; x.beginPath(); x.moveTo(130, 80); x.lineTo(130 + Math.cos(a) * 20, 80 + Math.sin(a) * 20); x.lineWidth = 1; x.stroke(); } break;
     case 'french': stripes(['#2a4a9a', '#f4f1ea', '#c62828'], true); break;
+    case 'china': case 'prc': {
+      x.fillStyle = '#c62828'; x.fillRect(0, 0, 260, 160);
+      const star = (cx, cy, R, rot) => { x.fillStyle = '#f2c230'; x.beginPath(); for (let i = 0; i < 10; i++) { const a = rot + i * Math.PI / 5, rr = i % 2 ? R * 0.382 : R; x.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } x.closePath(); x.fill(); };
+      star(52, 52, 30, -Math.PI / 2);
+      [[96, 22], [112, 42], [112, 68], [96, 88]].forEach(([sx, sy]) => star(sx, sy, 9, Math.atan2(52 - sy, 52 - sx) + Math.PI / 2 + Math.PI));
+      break;
+    }
     case 'saffron': case 'bhagwa': x.fillStyle = '#e07a1f'; x.fillRect(0, 0, 260, 160); break;
     case 'mughal': case 'green': x.fillStyle = '#2f7d3a'; x.fillRect(0, 0, 260, 160); x.fillStyle = '#d4a017'; x.beginPath(); x.arc(118, 80, 34, 0, 7); x.fill(); x.fillStyle = '#2f7d3a'; x.beginPath(); x.arc(132, 74, 30, 0, 7); x.fill(); break;
     default: x.fillStyle = '#' + (col(style) ?? 0xc62828).toString(16).padStart(6, '0'); x.fillRect(0, 0, 260, 160);
@@ -400,6 +433,65 @@ function building(name, r, opts = {}) {
     case 'boat': { g.add(mesh(G.box(1, 0.5, 3), M(0x6b4a2b), 0, 0.25, 0)); const b = mesh(G.cone(0.52, 0.8, 4), M(0x6b4a2b), 0, 0.25, 1.9); b.rotation.x = Math.PI / 2; b.rotation.y = Math.PI / 4; b.scale.set(1, 1, 0.5); g.add(b); break; }
     case 'well': { g.add(mesh(G.cyl(0.9, 0.9, 0.8, 10), M(STONE), 0, 0.4, 0)); for (const x of [-.8, .8]) g.add(mesh(G.box(0.12, 1.8, 0.12), M(0x4a3523), x, 1.2, 0)); g.add(mesh(G.box(1.9, 0.12, 0.12), M(0x4a3523), 0, 2.1, 0)); break; }
     case 'bridge': { g.add(mesh(G.box(3, 0.4, 14), M(0x7a5a3a), 0, 0.9, 0)); for (const z of [-5, 0, 5]) for (const x of [-1.3, 1.3]) g.add(mesh(G.box(0.3, 1.2, 0.3), M(0x5a4030), x, 0.4, z)); break; }
+    case 'trench': { // a dark channel between two earth banks topped with sandbags; soldiers placed on it stand "in" it
+      const L = 9, earth = wallC ?? 0x7a6a56;
+      g.add(mesh(G.box(L, 0.04, 1.3), M(0x1b1916), 0, 0.32, 0));
+      for (const s of [-1, 1]) {
+        g.add(mesh(G.box(L + 0.8, 0.8, 0.8), M(earth), 0, 0.4, s * 1.05));
+        g.add(mesh(G.box(L, 0.5, 0.05), M(shade(earth, 0.55)), 0, 0.55, s * 0.64));
+        for (let i = 0; i < L / 0.64; i++) { const b = mesh(G.box(0.58, 0.22, 0.34), M([0xb09a6a, 0xa28c5e, 0xbba676][i % 3]), (i - (L / 0.64 - 1) / 2) * 0.64, 0.91, s * 1.05); b.rotation.y = (r() - .5) * 0.1; g.add(b); }
+      }
+      break;
+    }
+    case 'sangar': { // a crescent of dry-stone wall, two courses high, open toward the camera
+      const stone = [0x6f7378, 0x7d8085, 0x62666b, 0x8a8d90];
+      for (let i = 0; i < 14; i++) { const a = (i / 13 - 0.5) * Math.PI * 0.85; const b = mesh(G.box(0.62 + r() * 0.3, 0.4, 0.55), M(stone[i % 4]), Math.sin(a) * 2.6, 0.2, -Math.cos(a) * 1.6 + 1.2); b.rotation.y = a * 0.55 + (r() - .5) * 0.2; g.add(b); }
+      for (let i = 0; i < 9; i++) { const a = (i / 8 - 0.5) * Math.PI * 0.62; const b = mesh(G.box(0.6 + r() * 0.25, 0.36, 0.5), M(stone[(i + 2) % 4]), Math.sin(a) * 2.3, 0.57, -Math.cos(a) * 1.6 + 1.2); b.rotation.y = a * 0.55 + (r() - .5) * 0.2; g.add(b); }
+      for (let i = 0; i < 4; i++) g.add(mesh(G.ico(0.18 + r() * 0.12, 0), M(stone[i]), (r() - .5) * 4, 0.12, 1.1 + r() * 0.8));
+      break;
+    }
+    case 'hangar': {
+      const c = wallC ?? 0xa7adb3;
+      g.add(mesh(G.box(9, 3.2, 12), M(c), 0, 1.6, 0));
+      for (const s of [-1, 1]) { const rf = mesh(G.box(5.2, 0.25, 12.6), M(0x6a7078), s * 2.4, 3.6, 0); rf.rotation.z = -s * 0.28; g.add(rf); }
+      g.add(mesh(G.box(6.2, 2.9, 0.12), M(0x2a2d31), 0, 1.45, 6.04));
+      g.add(mesh(G.box(0.18, 3.0, 0.2), M(0xcfd3d6), 0, 1.5, 6.1));
+      g.add(mesh(G.box(9.2, 0.3, 0.2), M(0xb33a2a), 0, 3.0, 6.05));
+      break;
+    }
+    case 'airstrip': { // a raised gravel apron, asphalt, dashed centre line, edge lines and lights
+      const L = 80, W = 9;
+      g.add(mesh(G.box(L + 3, 0.2, W + 2.5), M(0x8c8272), 0, 0.1, 0));
+      g.add(mesh(G.box(L, 0.05, W), M(0x3d4045), 0, 0.225, 0));
+      for (let x = -L / 2 + 4; x < L / 2 - 2; x += 6) g.add(mesh(G.box(3, 0.02, 0.22), M(0xe8e4d4), x, 0.26, 0));
+      for (const s of [-1, 1]) {
+        g.add(mesh(G.box(L - 2, 0.02, 0.12), M(0xe8e4d4), 0, 0.26, s * (W / 2 - 0.4)));
+        for (let x = -L / 2 + 2; x <= L / 2 - 1; x += 8) { const lamp = new THREE.Mesh(G.ico(0.1, 0), glow(0xffd070)); lamp.position.set(x, 0.3, s * (W / 2 + 0.5)); g.add(lamp); }
+        for (let i = 0; i < 5; i++) g.add(mesh(G.box(2.2, 0.02, 0.4), M(0xe8e4d4), s * (L / 2 - 2.2), 0.26, (i - 2) * 1.5));
+      }
+      break;
+    }
+    case 'aircraft': { // a twin-engine transport, nose toward +z
+      const c = wallC ?? 0xb9bec4;
+      const fus = mesh(G.cyl(0.9, 1.05, 9, 10), M(c, { metalness: .3, roughness: .5 }), 0, 1.9, 0); fus.rotation.x = Math.PI / 2; g.add(fus);
+      const nose = mesh(G.cone(0.9, 2, 10), M(c, { metalness: .3, roughness: .5 }), 0, 1.9, 5.5); nose.rotation.x = Math.PI / 2; g.add(nose);
+      const tail = mesh(G.cone(1.0, 3.2, 10), M(c, { metalness: .3, roughness: .5 }), 0, 2.0, -6.1); tail.rotation.x = -Math.PI / 2; g.add(tail);
+      g.add(mesh(G.box(15, 0.22, 2.4), M(shade(c, 0.85)), 0, 2.45, 0.4));
+      g.add(mesh(G.box(0.2, 2.4, 1.8), M(shade(c, 0.9)), 0, 3.6, -6.4)); g.add(mesh(G.box(5, 0.15, 1.2), M(shade(c, 0.85)), 0, 2.5, -6.6));
+      g.add(mesh(G.box(2.2, 0.35, 0.25), M(0x2f7a3a), 0, 3.4, -6.4)); // a plain fin stripe so the tail reads from afar
+      const blades = [];
+      for (const x of [-3.6, 3.6]) {
+        const n = mesh(G.cyl(0.4, 0.4, 2.4, 8), M(shade(c, 0.8)), x, 2.1, 1.4); n.rotation.x = Math.PI / 2; g.add(n);
+        const hub = new THREE.Group(); hub.position.set(x, 2.1, 2.7);
+        for (let i = 0; i < 3; i++) { const bl = mesh(G.box(0.14, 2.3, 0.03), M(0x222222), 0, 0, 0); bl.rotation.z = i / 3 * Math.PI * 2; hub.add(bl); }
+        g.add(hub); blades.push(hub);
+        const wh = mesh(G.cyl(0.35, 0.35, 0.22, 8), M(0x2b2f33), x, 0.35, 1.4); wh.rotation.z = Math.PI / 2; g.add(wh);
+      }
+      { const nw = mesh(G.cyl(0.3, 0.3, 0.2, 8), M(0x2b2f33), 0, 0.3, 4); nw.rotation.z = Math.PI / 2; g.add(nw); }
+      for (const s of [-1, 1]) for (let i = 0; i < 5; i++) g.add(mesh(G.box(0.04, 0.26, 0.34), M(0x20262c), s * 1.0, 2.3, 1.8 - i * 0.9));
+      g.tick = t => { blades.forEach((b, k) => { b.rotation.z = t * 22 + k; }); };
+      break;
+    }
     default: return null;
   }
   return g;
@@ -432,6 +524,32 @@ function prop(name, r, opts = {}) {
     case 'pillar': g.add(mesh(G.cyl(0.35, 0.4, 4.5, 8), M(MARBLE), 0, 2.25, 0)); g.add(mesh(G.box(0.9, 0.3, 0.9), M(MARBLE), 0, 4.6, 0)); break;
     case 'crown': g.add(mesh(G.box(0.6, 0.15, 0.6), M(0x8a1c1c), 0, 0.075, 0)); g.add(mesh(G.cyl(0.2, 0.18, 0.18, 6), M(0xd4a017, { metalness: .6 }), 0, 0.24, 0)); break;
     case 'tree': return tree(opts.kind || 'mango', r);
+    case 'rifle': { // lying on the ground, muzzle toward +z
+      g.add(mesh(G.box(0.07, 0.06, 0.55), M(0x5a3d22), 0, 0.05, -0.3));
+      g.add(mesh(G.box(0.035, 0.035, 0.62), M(0x2b2f33, { metalness: .6, roughness: .4 }), 0, 0.055, 0.3));
+      g.add(mesh(G.box(0.05, 0.05, 0.12), M(0x3a3e42, { metalness: .5 }), 0, 0.07, 0)); break;
+    }
+    case 'rifle_helmet': { // the soldier's memorial: rifle planted muzzle-down, helmet on the butt, a few stones at the base
+      g.add(mesh(G.box(0.032, 0.6, 0.032), M(0x2b2f33, { metalness: .6, roughness: .4 }), 0, 0.3, 0));
+      g.add(mesh(G.box(0.07, 0.55, 0.09), M(0x5a3d22), 0, 0.87, 0));
+      g.add(mesh(G.dome(0.2, 8, 4), M(0x55603a, { metalness: .3, roughness: .6 }), 0, 1.15, 0));
+      g.add(mesh(G.cyl(0.27, 0.27, 0.025, 10), M(0x4a5530, { metalness: .3, roughness: .6 }), 0, 1.15, 0));
+      for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; g.add(mesh(G.ico(0.13 + r() * 0.06, 0), M(0x7a7e83), Math.sin(a) * 0.28, 0.08, Math.cos(a) * 0.28)); } break;
+    }
+    case 'helmet': g.add(mesh(G.dome(0.2, 8, 4), M(0x55603a, { metalness: .3, roughness: .6 }), 0, 0.02, 0)); g.add(mesh(G.cyl(0.27, 0.27, 0.025, 10), M(0x4a5530, { metalness: .3, roughness: .6 }), 0, 0.02, 0)); break;
+    case 'sandbags': {
+      const c = [0xb09a6a, 0xa28c5e, 0xbba676];
+      for (let row = 0; row < 3; row++) { const n = 4 - row; for (let i = 0; i < n; i++) { const b = mesh(G.box(0.62, 0.26, 0.36), M(c[(i + row) % 3]), (i - (n - 1) / 2) * 0.64, 0.13 + row * 0.26, 0); b.rotation.y = (r() - .5) * 0.12; g.add(b); } } break;
+    }
+    case 'ammo_crate':
+      g.add(mesh(G.box(0.9, 0.45, 0.5), M(0x4e5a35), 0, 0.225, 0)); g.add(mesh(G.box(0.92, 0.06, 0.52), M(0x38422a), 0, 0.45, 0));
+      g.add(mesh(G.box(0.3, 0.05, 0.02), M(0xe8dcb8), 0, 0.28, 0.26)); for (const x of [-0.46, 0.46]) g.add(mesh(G.box(0.04, 0.1, 0.2), M(0x2b2f33), x, 0.34, 0)); break;
+    case 'windsock': {
+      g.add(mesh(G.cyl(0.04, 0.05, 3, 5), M(0x6b6b6b), 0, 1.5, 0));
+      const sock = new THREE.Group(); sock.position.y = 3;
+      for (let i = 0; i < 4; i++) { const r1 = 0.3 - i * 0.05, r2 = 0.3 - (i + 1) * 0.05; const seg = mesh(G.cyl(r2, r1, 0.28, 8), M(i % 2 ? 0xf2efe6 : 0xe0601a), 0.14 + i * 0.28, 0, 0); seg.rotation.z = Math.PI / 2; sock.add(seg); }
+      g.add(sock); g.tick = t => { sock.rotation.y = 0.5 + Math.sin(t * 1.7) * 0.25; sock.rotation.z = -0.15 + Math.sin(t * 2.3) * 0.08; }; break;
+    }
     default: return null;
   }
   if (light) { g.lightSpec = light; }
@@ -537,6 +655,7 @@ const TIMES = {
   dusk: { bg: 0x6b5a7a, sky: 0x9a8ab0, gnd: 0x2a2030, hi: .65, sun: 0xff8a60, si: .7, pos: [-40, 9, -20], fog: [35, 140] },
   night: { bg: 0x16203a, sky: 0x6a7aaa, gnd: 0x0a0a10, hi: .75, sun: 0x9ab0ff, si: .6, pos: [20, 40, 10], fog: [25, 120] },
   dawn: { bg: 0xd8a8a8, sky: 0xffd8d0, gnd: 0x40354a, hi: .75, sun: 0xffb090, si: .9, pos: [40, 12, -10], fog: [40, 160] },
+  overcast: { bg: 0x8d97a3, sky: 0xcfd8e2, gnd: 0x66707a, hi: 1.0, sun: 0xe8eef6, si: .55, pos: [-20, 50, 20], fog: [40, 160] },
   storm: { bg: 0x39424e, sky: 0x76879a, gnd: 0x252e1c, hi: .55, sun: 0xcfdce8, si: .75, pos: [-38, 32, 18], fog: [60, 230] },
 };
 const GRASS = [0x5f7a3a, 0x6b8442, 0x56713a, 0x768a48], DIRT = [0x8a7450, 0x7d6a48, 0x96805a, 0x85704c], SANDS = [0xd9b98a, 0xcfae7c, 0xe2c496, 0xc8a676];
@@ -553,6 +672,8 @@ const SETTINGS = {
   fort: { S: 1, D: 32, ground: DIRT, outdoor: 1, time: 'day' },
   palace: { S: 1, D: 30, ground: [0x8a806c, 0x968c76, 0x7e7462], outdoor: 1, time: 'day' },
   temple: { S: 1, D: 28, ground: [0x6f634c, 0x7a6e56, 0x665a44], outdoor: 1, time: 'day' },
+  mountain: { S: 1, D: 34, ground: [0xc3cfdd, 0xb8c5d5, 0xcdd8e4, 0xaebcce], outdoor: 1, time: 'overcast', amp: 0.3, snow: 1, peakH: 1.7 },
+  airfield: { S: 1, D: 36, ground: [0x9a9080, 0x8c8272, 0xa59b88, 0x948a7a], outdoor: 1, time: 'day', amp: 0.1, peakCol: 0x8a7e6c },
   court: { S: 0.35, D: 12, interior: 1, time: 'day' },
   room: { S: 0.2, D: 6.2, interior: 1, time: 'night' },
   tent: { S: 0.2, D: 5.8, interior: 1, time: 'night' },
@@ -563,8 +684,8 @@ const SLOTS = { center: [0, 0], left: [-10, 0], right: [10, 0], far_left: [-20, 
 const CAMERAS = ['wide', 'aerial', 'swoop_down', 'push_in', 'pull_out', 'orbit', 'pan_left', 'pan_right', 'low_angle', 'close_up', 'over_shoulder', 'top_down', 'track', 'crane_up', 'static'];
 const ACTIONS = ['stand', 'point', 'raise_sword', 'salute', 'bow', 'kneel', 'walk', 'talk', 'wave', 'hold_letter', 'hold_scroll', 'read', 'celebrate', 'sit', 'defeated', 'turn_to_camera', 'look_down', 'fight', 'think', 'shock', 'slump', 'nod', 'gesture', 'pray', 'beckon'];
 const FX = ['rain', 'lightning', 'smoke', 'fire', 'fog', 'dust', 'embers', 'desaturate', 'sepia', 'shake', 'flash', 'snow'];
-const PROPS = ['cannon', 'barrel', 'crate', 'table', 'throne', 'letter', 'coins', 'chest', 'scroll', 'book', 'sword', 'shield', 'rock', 'cart', 'horse', 'elephant', 'flag', 'banner', 'candle', 'lamp', 'torch', 'campfire', 'pillar', 'crown', 'tree'];
-const BUILDINGS = ['house', 'hut', 'temple', 'dome', 'mosque', 'tomb', 'palace', 'fort', 'wall', 'tower', 'gate', 'stupa', 'tent', 'ship', 'boat', 'well', 'bridge'];
+const PROPS = ['cannon', 'barrel', 'crate', 'table', 'throne', 'letter', 'coins', 'chest', 'scroll', 'book', 'sword', 'shield', 'rock', 'cart', 'horse', 'elephant', 'flag', 'banner', 'candle', 'lamp', 'torch', 'campfire', 'pillar', 'crown', 'tree', 'rifle', 'rifle_helmet', 'helmet', 'sandbags', 'ammo_crate', 'windsock'];
+const BUILDINGS = ['house', 'hut', 'temple', 'dome', 'mosque', 'tomb', 'palace', 'fort', 'wall', 'tower', 'gate', 'stupa', 'tent', 'ship', 'boat', 'well', 'bridge', 'trench', 'sangar', 'hangar', 'airstrip', 'aircraft'];
 
 // =====================================================================
 //  SCENE BUILDER
@@ -617,23 +738,27 @@ class Built {
     const bg = this.setting === 'studio' ? (col(this.sc.color) ?? 0x2a2f3a) : T.bg;
     scene.background = new THREE.Color(bg);
     if (SET.outdoor) {
-      let [fn, ff] = T.fog; if (this.fx.has('fog')) { fn *= 0.35; ff *= 0.45; }
+      let [fn, ff] = T.fog; if (SET.fogK) { fn *= SET.fogK; ff *= SET.fogK; } if (this.fx.has('fog')) { fn *= 0.35; ff *= 0.45; }
       scene.fog = new THREE.Fog(bg, fn, ff);
       scene.add(new THREE.HemisphereLight(T.sky, T.gnd, T.hi));
       const d = new THREE.DirectionalLight(T.sun, T.si); d.position.set(...T.pos); d.castShadow = true; d.shadow.mapSize.set(2048, 2048); d.shadow.bias = -0.0005;
       const c = d.shadow.camera; c.left = -45; c.right = 45; c.top = 45; c.bottom = -45; c.near = 1; c.far = 250; scene.add(d); this.hemi = scene.children[0]; this.sunL = d;
       const rim = new THREE.DirectionalLight(T.warm ? 0xffc890 : 0xa8c4ff, 0.38); rim.position.set(-T.pos[0], T.pos[1] * 0.6, -T.pos[2] - 30); scene.add(rim);
-      scene.add(ground(300, 80, SET.ground, 0.55, 11 + this.idx));
-      // distant hills ring
-      for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2 + r() * 0.2, R = 120 + r() * 40, h = 14 + r() * 26; const m = mesh(G.cone(18 + r() * 14, h, 5), M(this.setting === 'desert' || this.setting === 'coast' ? 0xb89a6a : 0x5a6a48), Math.sin(a) * R, h / 2 - 1, -Math.abs(Math.cos(a)) * R); m.castShadow = false; scene.add(m); }
+      scene.add(ground(300, 80, SET.ground, SET.amp ?? 0.55, 11 + this.idx));
+      // distant hills ring (snow settings: taller grey peaks with white caps)
+      for (let i = 0; i < 16; i++) {
+        const a = i / 16 * Math.PI * 2 + r() * 0.2, R = 120 + r() * 40, h = (14 + r() * 26) * (SET.peakH || 1), rad = 18 + r() * 14, px = Math.sin(a) * R, pz = -Math.abs(Math.cos(a)) * R;
+        const m = mesh(G.cone(rad, h, 5), M(SET.snow ? 0x6c7682 : (SET.peakCol ?? (this.setting === 'desert' || this.setting === 'coast' ? 0xb89a6a : 0x5a6a48))), px, h / 2 - 1, pz); m.castShadow = false; scene.add(m);
+        if (SET.snow) { const cp = mesh(G.cone(rad * 0.47, h * 0.45, 5), M(0xeef3f8), px, h * 0.775 - 1, pz); cp.castShadow = false; scene.add(cp); }
+      }
       this.decorate();
       this.clutter();
     } else this.buildInterior();
   }
   // small ground life: grass tufts, stones, dirt patches — instanced, so nearly free
   clutter() {
-    const { scene, r } = this, set = this.setting, sandy = set === 'desert' || set === 'coast';
-    const place = (im, n, rmin, rmax, colors, scaleFn) => {
+    const { scene, r } = this, set = this.setting, sandy = set === 'desert' || set === 'coast' || set === 'airfield', snowy = !!this.SET.snow;
+    const place =(im, n, rmin, rmax, colors, scaleFn) => {
       const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = V(0, 1, 0), c = new THREE.Color();
       for (let i = 0; i < n; i++) {
         const a = r() * Math.PI * 2, R = lerp(rmin, rmax, Math.sqrt(r()));
@@ -644,7 +769,7 @@ class Built {
       im.castShadow = false; im.receiveShadow = false; scene.add(im);
     };
     const mat = () => new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true, roughness: 1 });
-    if (!sandy && set !== 'city') {
+    if (!sandy && !snowy && set !== 'city') {
       const tufts = new THREE.InstancedMesh(G.cone(0.16, 0.42, 5), mat(), 150);
       place(tufts, 150, 2, 50, [0x4e6a2e, 0x5c7836, 0x46602c, 0x6a8440], () => V(0.8 + r() * 0.8, 0.6 + r() * 0.9, 0.8 + r() * 0.8));
     }
@@ -653,9 +778,9 @@ class Built {
       place(shrubs, 40, 4, 50, [0x8a7a4a, 0x7a6a40, 0x97865a], () => V(1 + r(), 0.5 + r() * 0.6, 1 + r()));
     }
     const stones = new THREE.InstancedMesh(G.ico(0.22, 0), mat(), 30);
-    place(stones, 30, 3, 52, sandy ? [0xb09a72, 0xa08a62, 0xc0ac86] : [0x8a8478, 0x7a7468, 0x9a9488], () => V(0.6 + r() * 1.6, 0.4 + r() * 0.8, 0.6 + r() * 1.6));
+    place(stones, 30, 3, 52, snowy ? [0x6b7078, 0x5f646b, 0x777c83] : sandy ? [0xb09a72, 0xa08a62, 0xc0ac86] : [0x8a8478, 0x7a7468, 0x9a9488],() => V(0.6 + r() * 1.6, 0.4 + r() * 0.8, 0.6 + r() * 1.6));
     const patches = new THREE.InstancedMesh(G.cyl(1, 1, 0.02, 7), mat(), 12);
-    place(patches, 12, 4, 46, sandy ? [0xc4a476, 0xb89a6a] : [0x6a5a3e, 0x75654a, 0x5e5036], () => V(1.2 + r() * 2.2, 1, 1.2 + r() * 2.2));
+    place(patches, 12, 4, 46, snowy ? [0xe9eff6, 0xdbe4ee] : sandy ? [0xc4a476, 0xb89a6a] : [0x6a5a3e, 0x75654a, 0x5e5036],() => V(1.2 + r() * 2.2, 1, 1.2 + r() * 2.2));
   }
   decorate() {
     const { scene, r } = this, set = this.setting, scatterRing = (n, rmin, rmax, fn, back = false) => { for (let i = 0; i < n; i++) { const a = (back ? Math.PI * (0.6 + r() * 0.8) : r() * Math.PI * 2); const R = lerp(rmin, rmax, r()); const o = fn(); if (!o) continue; o.position.set(Math.sin(a) * R, 0, Math.cos(a) * R); if (Math.abs(o.position.x) < 30 && o.position.z > -8 && o.position.z < 14) o.position.z -= 26; o.rotation.y = r() * 6; scene.add(o); if (o.tick) this.ticks.push(o.tick); } };
@@ -672,6 +797,20 @@ class Built {
       case 'fort': { const f = building('fort', r); f.position.set(0, 0, -18); scene.add(f); if (f.tick) this.ticks.push(f.tick); scatterRing(16, 36, 70, () => tree('mango', r)); break; }
       case 'palace': { const p = building('palace', r); p.position.set(0, 0, -20); scene.add(p); scatterRing(12, 30, 60, () => tree('palm', r)); break; }
       case 'temple': { const p = building('temple', r); p.position.set(0, 0, -16); scene.add(p); if (p.tick) this.ticks.push(p.tick); scatterRing(16, 26, 60, () => tree(r() < .5 ? 'banyan' : 'palm', r)); break; }
+      case 'mountain': {
+        // a snow-capped ridge in the mid-distance and dark boulders with snow on top
+        for (let i = 0; i < 9; i++) { const x = (i - 4) * 14 + (r() - .5) * 6, h = 9 + r() * 9, w = 9 + r() * 5, z = -42 - r() * 8; const m = mesh(G.cone(w, h, 5), M(0x6c7682), x, h / 2 - 0.5, z); m.castShadow = false; scene.add(m); const cp = mesh(G.cone(w * 0.5, h * 0.5, 5), M(0xeef3f8), x, h * 0.76 - 0.5, z); cp.castShadow = false; scene.add(cp); }
+        scatterRing(16, 12, 55, () => snowRock(r)); break;
+      }
+      case 'airfield': {
+        const put = (o, x, z, ry = 0) => { o.position.set(x, 0, z); o.rotation.y = ry; scene.add(o); if (o.tick) this.ticks.push(o.tick); return o; };
+        put(building('airstrip', r), 0, -12);
+        put(building('hangar', r), -26, -24);
+        put(building('tower', r, { color: '#cfc9b6' }), 24, -22);
+        put(prop('windsock', r), 14, -6);
+        put(flagpole('tricolour', 5), 8, -19);
+        break;
+      }
     }
   }
   buildInterior() {
@@ -744,6 +883,8 @@ class Built {
     let armySide = 0;
     const SMALL = ['letter', 'coins', 'book', 'scroll', 'sword', 'crown', 'candle'];
     const hasTable = els.some(x => x.type === 'prop' && x.name === 'table');
+    const trenches = els.filter(x => x.type === 'building' && x.name === 'trench').map(x => ({ p: slotPos(x.pos ?? 'center', S), rot: x.rotate ?? 0, s: x.scale ?? 1 }));
+    const inTrench = p => trenches.some(t => { const dx = p.x - t.p.x, dz = p.z - t.p.z, c = Math.cos(t.rot), s2 = Math.sin(t.rot); return Math.abs(dx * c - dz * s2) <= 4.5 * t.s && Math.abs(dx * s2 + dz * c) <= 0.65 * t.s; });
     els.forEach((e, k) => {
       const r = rng(this.idx * 131 + k * 17 + 5);
       const type = e.type;
@@ -755,6 +896,7 @@ class Built {
         if (!cdef && (e.character || e.id)) this.warn(`character "${e.character || e.id}" not defined in characters → villager`);
         const look = lookFrom(cdef || 'villager', this.warn);
         const p = person(look); p.position.copy(pos);
+        if (e.frost) frostify(p);
         if (e.scale) p.scale.multiplyScalar(e.scale);
         const faceTo = typeof e.face === 'string' && this.entities[e.face] ? this.entities[e.face].pos : e.face;
         p.rotation.y = faceAngle(faceTo, pos);
@@ -808,11 +950,13 @@ class Built {
           let o = type === 'building' ? building(name, r, e) : prop(name, r, { style: e.style, color: e.color, kind: e.kind });
           if (!o) { this.warn(`unknown ${type} "${name}" → crate`); o = prop('crate', r); }
           const p2 = pos.clone(); if (n > 1) { const a = i / n * Math.PI * 2 + r(), R = spread * Math.sqrt(r()); p2.x += Math.cos(a) * R; p2.z += Math.sin(a) * R; }
-          if (SMALL.includes(name) && (e.on === 'table' || (hasTable && e.on !== 'floor'))) p2.y = 0.5; o.position.copy(p2);
+          if (SMALL.includes(name) && (e.on === 'table' || (hasTable && e.on !== 'floor'))) p2.y = 0.5;
+          else if (type === 'prop' && inTrench(p2)) p2.y = 0.34; // rest on the trench floor, not under it
+          o.position.copy(p2);
           o.rotation.y = e.rotate ?? (type === 'building' ? 0 : (n > 1 ? r() * 6 : faceAngle(e.face, p2)));
           if (e.scale) o.scale.multiplyScalar(e.scale);
           scene.add(o); if (o.tick) this.ticks.push(o.tick); this.attachLight(o);
-          if (i === 0) this.entities[id] = { obj: o, pos: p2.clone(), kind: type, head: type === 'building' ? 4 : 1 };
+          if (i === 0) this.entities[id] = { obj: o, pos: p2.clone(), kind: type, head: type === 'building' ? 4 : 1, rad: type === 'building' ? ({ aircraft: 11, hangar: 9, airstrip: 12, trench: 6, sangar: 5 }[name]) : undefined };
         }
         return;
       }
@@ -847,12 +991,16 @@ class Built {
     const ph0 = this.r() * 7, spd = 0.9 + this.r() * 0.25; // each figure lives on its own clock
     this.ticks.push((t, lt, dur) => {
       const k = clamp(lt / dur), ph = t * spd + ph0;
-      // idle life: breathing, weight sway, hanging arms, wandering gaze — actions overwrite what they own
-      p.body.position.y = 0.022 * Math.sin(ph * 2);
-      p.body.rotation.z = 0.02 * Math.sin(ph * 0.9);
-      p.armL.rotation.x = 0.05 * Math.sin(ph * 1.3); p.armL.rotation.z = 0;
-      p.armR.rotation.x = 0.05 * Math.sin(ph * 1.3 + 1.1); p.armR.rotation.z = 0;
-      p.head.rotation.y = 0.07 * Math.sin(ph * 0.6); p.head.rotation.x = 0.03 * Math.sin(ph * 1.05);
+      // idle life: breathing, weight sway, hanging arms, wandering gaze — actions overwrite what they own.
+      // A frozen figure (e.frost) does none of this: it is perfectly still.
+      if (e.frost) { p.body.position.y = 0; p.body.rotation.z = 0; p.armL.rotation.set(0, 0, 0); p.armR.rotation.set(0, 0, 0); p.head.rotation.set(0, 0, 0); }
+      else {
+        p.body.position.y = 0.022 * Math.sin(ph * 2);
+        p.body.rotation.z = 0.02 * Math.sin(ph * 0.9);
+        p.armL.rotation.x = 0.05 * Math.sin(ph * 1.3); p.armL.rotation.z = 0;
+        p.armR.rotation.x = 0.05 * Math.sin(ph * 1.3 + 1.1); p.armR.rotation.z = 0;
+        p.head.rotation.y = 0.07 * Math.sin(ph * 0.6); p.head.rotation.x = 0.03 * Math.sin(ph * 1.05);
+      }
       switch (action) {
         case 'point': p.armR.rotation.x = -1.45 * easeOut(clamp(lt / 0.6)); break;
         case 'raise_sword': p.armR.rotation.x = -2.9 * easeOut(clamp(lt / 0.5)) + 0.08 * Math.sin(ph * 6); break;
@@ -1041,7 +1189,7 @@ class Built {
     const { F, head, ent } = this.focusInfo();
     if (this.autoD === undefined) {
       if (this.D || this.SET.interior) this.autoD = this.D || this.SET.D;
-      else { let ext = 0; const all = Object.values(this.entities), core = all.filter(e => e.kind !== 'building'); for (const e of (core.length ? core : all)) ext = Math.max(ext, e.pos.distanceTo(F) + (e.kind === 'army' ? (e.rad || 8) : e.kind === 'building' ? 7 : 2.5)); this.autoD = clamp(ext * 1.25 + 4, 10, this.SET.D); }
+      else { let ext = 0; const all = Object.values(this.entities), core = all.filter(e => e.kind !== 'building' || (e.rad || 0) >= 9); for (const e of (core.length ? core : all)) ext = Math.max(ext, e.pos.distanceTo(F) + (e.kind === 'army' ? (e.rad || 8) : e.kind === 'building' ? (e.rad || 7) : 2.5)); this.autoD = clamp(ext * 1.25 + 4, 10, this.SET.D); }
     }
     let D = this.autoD * vf * (this.curZoom || 1);
     const RY = this.sideView ? (v => new THREE.Vector3(-v.z, v.y, v.x)) : (v => v);

@@ -1,0 +1,52 @@
+{
+  "meta": {"id": "DEMO-ASSETS", "title": "Asset sampler: snow ridge, trench, airfield, frozen soldiers, PLA", "format": "short", "lang": "hi", "captions": true, "loop": false},
+  "characters": {
+    "jawan": {"type": "modern_soldier", "label": "जवान"},
+    "pla": {"type": "pla_soldier"},
+    "cmdr": {"type": "pla_officer"}
+  },
+  "scenes": [
+    {"id": 1, "narration": "रेज़ांग ला की बर्फ़ीली चोटी पर खाइयाँ थीं और पत्थर की आड़ें।", "keyword": "खाइयाँ",
+     "setting": "mountain", "time": "overcast", "camera": "wide", "focus": "jawan", "fx": ["snow"],
+     "elements": [
+       {"type": "building", "name": "trench", "pos": [0, 0]},
+       {"type": "building", "name": "sangar", "pos": [-9, -3]},
+       {"type": "prop", "name": "sandbags", "pos": [6, 1]},
+       {"type": "prop", "name": "ammo_crate", "pos": [3, 3]},
+       {"type": "character", "character": "jawan", "id": "jawan", "pos": [-1.5, 0.2], "action": "stand", "face": "right"},
+       {"type": "character", "character": "jawan", "pos": [1.5, 0.2], "action": "point", "face": "right"},
+       {"type": "army", "faction": "pla", "size": "medium", "pos": [16, -4], "face": "left", "motion": "advance", "flag": "china"}
+     ]},
+    {"id": 2, "narration": "चुशूल की हवाई पट्टी।", "keyword": "हवाई पट्टी",
+     "setting": "airfield", "time": "day", "camera": "aerial", "focus": "center",
+     "elements": [
+       {"type": "building", "name": "aircraft", "pos": [-6, 4], "rotate": 1.2},
+       {"type": "building", "name": "tent", "pos": [8, 6]},
+       {"type": "building", "name": "tent", "pos": [11, 4]},
+       {"type": "character", "character": "jawan", "pos": [0, 6], "action": "salute"}
+     ]},
+    {"id": 3, "narration": "फ़रवरी की बर्फ़ में जमे हुए सैनिक।", "keyword": "जमे",
+     "setting": "mountain", "time": "dawn", "camera": "push_in", "focus": "f1", "fx": ["snow", "fog"],
+     "elements": [
+       {"type": "character", "character": "jawan", "id": "f1", "pos": [-2, 1], "action": "kneel", "face": "right", "frost": true},
+       {"type": "character", "character": "jawan", "pos": [1, 0], "action": "stand", "face": "right", "frost": true},
+       {"type": "character", "character": "jawan", "pos": [4, 2], "action": "stand", "face": "right", "frost": true},
+       {"type": "prop", "name": "rifle_helmet", "pos": [-5, 2]}
+     ]},
+    {"id": 4, "narration": "खाली खाई में अकेली राइफ़ल।", "keyword": "अकेली राइफ़ल",
+     "setting": "mountain", "time": "storm", "camera": "low_angle", "focus": "center", "fx": ["snow"],
+     "elements": [
+       {"type": "building", "name": "trench", "pos": [0, -1]},
+       {"type": "prop", "name": "rifle", "pos": [0, -1]},
+       {"type": "prop", "name": "helmet", "pos": [2, -1]},
+       {"type": "prop", "name": "ammo_crate", "pos": [-2.5, 2]}
+     ]},
+    {"id": 5, "narration": "सर्दी की वर्दी में सामने खड़ी चीनी फ़ौज।", "keyword": "चीनी फ़ौज",
+     "setting": "hills", "time": "day", "camera": "close_up", "focus": "cmd",
+     "elements": [
+       {"type": "character", "character": "cmdr", "id": "cmd", "pos": "center", "action": "point", "face": "camera"},
+       {"type": "army", "faction": "pla", "size": "small", "pos": "back", "face": "camera"},
+       {"type": "flag", "style": "china", "pos": [3, -2]}
+     ]}
+  ]
+}

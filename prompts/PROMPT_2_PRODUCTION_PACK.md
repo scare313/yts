@@ -64,7 +64,7 @@ Turn the approved scene plan into the scene file, following the SCENE FILE REFER
    - Shorts: meta.loop true. meta.end_card is OPTIONAL and OFF by default (it appears in the last 2 s and breaks the loop); add it only if I ask for it.
 4. Variety: never the same setting + camera twice in a row; for Shorts at most one map scene and no timeline unless dates are the story; for long videos rotate through maps, battles, interiors, timelines and cards; ≤ 20% map/timeline/card scenes combined.
 5. Accuracy of visuals: period-correct factions and costumes (no redcoats before 1600s, no tricolour before 1947), real coordinates on maps.
-6. thumbnail: as decided in Stage 1. missing_assets: anything you wanted but couldn't show, with the substitute used.
+6. thumbnail: as decided in Stage 1. missing_assets: ONLY things that are absent from the ASSET LIBRARY and matter to the story, each with the substitute you used. Before you design any scene, read the ASSET LIBRARY and its STORY KITS and build the visuals from assets that exist — a person, uniform, building or prop that is in the library must be used, never reported as missing.
 7. PRE-FLIGHT — run the PRE-FLIGHT CHECKLIST (at the end of the reference below) on your scene list and silently fix every violation BEFORE printing anything.
 8. OUTPUT
    - SHORT: one ```json code block = the complete spec.json.
@@ -85,7 +85,7 @@ FILE SHAPE (JSON)
            "end_screen": true (long: 12 s branded end screen for YouTube end-screen links, default true), "look": "diorama" | "flat", "brand": false (turns the Time Taped style off)},
   "characters": {"<key>": {"type": "<character type>", "label": "on-screen name", ...optional overrides}},
   "thumbnail": {"scene": <scene number>, "text": "≤4 words (long: use \n for 2 lines)", "sub": "≤5 words", "year": 1757, "at": 0.7},
-  "missing_assets": ["things the engine could not show and what was used instead"],
+  "missing_assets": ["things the engine could not show and what was used instead — check the ASSET LIBRARY first; never list something that is in it"],
   "scenes": [ <scene>, <scene>, ... ]
 }
 Long videos may be split: spec.json (meta, characters, thumbnail, first scenes) + scenes_02.json, scenes_03.json … each {"scenes": [...]}. The engine joins them in name order.
@@ -112,17 +112,19 @@ SCENE
 }
 
 SETTINGS
-  outdoor: battlefield, field, village, river, coast (sea at back), desert, hills, forest, city, fort (fort wall + gate at back), palace (palace at back), temple (temple at back)
+  outdoor: battlefield, field, village, river, coast (sea at back), desert, hills, forest, city, fort (fort wall + gate at back), palace (palace at back), temple (temple at back),
+           mountain (snow ridge: white ground, snow-capped peaks, snow-dusted boulders), airfield (gravel field with runway, hangar, control tower, tricolour pole and windsock behind the action)
   indoor:  court (durbar hall: pillars, carpet — add a throne prop at "back"), room (default candle), tent (default oil lamp), studio (plain coloured stage)
   special: map, timeline, card, image
-TIME: day, golden, dusk, night, dawn, storm   (indoor: night = dark + candle/torch light)
+TIME: day, golden, dusk, night, dawn, storm, overcast (soft grey light — the look for snow and cold)   (indoor: night = dark + candle/torch light)
 CAMERA: wide, aerial, swoop_down, push_in, pull_out, orbit, pan_left, pan_right, low_angle, top_down, crane_up, static,
         close_up*, over_shoulder*, track*     (* focus must be a character)
 POSITIONS ("pos"): center, left, right, far_left, far_right, front, front_left, front_right, back, back_left, back_right, far_back
         or [x, z]: x = −30 (left) … 30 (right); z = −30 (far from camera) … 10 (near camera). Indoor scenes use the same numbers (scaled down automatically) — keep them within −8…8.
 
 ELEMENTS
-  {"type":"character", "character":"<key>", "id":"<optional id>", "pos":..., "action":"<action>", "face":"left|right|camera|back|<id of an element listed earlier>", "mounted":true, "scale":1}
+  {"type":"character", "character":"<key>", "id":"<optional id>", "pos":..., "action":"<action>", "face":"left|right|camera|back|<id of an element listed earlier>", "mounted":true, "scale":1, "frost":true}
+       ("frost":true = covered in frost and snow, perfectly still: no breathing, no sway. Use with action "stand" or "kneel" for soldiers frozen in the snow. No injury, no bodies.)
   {"type":"army", "id":"...", "faction":"<faction>", "size":"tiny|small|medium|large|huge", "pos":..., "motion":"still|advance|retreat|charge|march",
        "face":"left|right|camera|back", "elephants":true, "cavalry":true, "cannons":3, "banners":true, "flag":"<flag style>", "coat":"#hex", "turban":"#hex"}
   {"type":"cavalry", "faction":"...", "size":"...", "pos":..., "motion":"...", "face":"..."}
@@ -135,19 +137,44 @@ ELEMENTS
 
 CHARACTER TYPES: emperor, king, queen, nawab, noble, minister, general, british_officer, british_soldier, british_official, sepoy, french_officer,
   european_merchant, portuguese, mughal_soldier, maratha_warrior, rajput_warrior, sikh_warrior, afghan_warrior, ancient_warrior, greek_soldier,
-  sage, monk, priest, scholar, merchant, farmer, villager, woman, freedom_fighter, leader, modern_soldier, officer_suit, scientist, child
-  overrides: coat, turban, sash, beard, hair, legs, scarf, helmet, vest (colours), hat (turban|tricorne|tophat|crown|helmet|cap|headscarf|bun|none),
-  plume (true or colour), sword (true), musket (true), spear (true), robe (true = long robe), skin (indian|european|afghan|east_asian|african), s (size, 0.7 = child)
+  sage, monk, priest, scholar, merchant, farmer, villager, woman, freedom_fighter, leader, modern_soldier (olive uniform, steel helmet, rifle), pla_soldier (Chinese infantry: quilted khaki coat, fur cap with red badge, rifle),
+  pla_officer (same, red sash), officer_suit, scientist, child
+  overrides: coat, turban, sash, beard, hair, legs, scarf, helmet, vest (colours), hat (turban|tricorne|tophat|crown|helmet|cap|fur_cap|headscarf|bun|none), capColor (cap / fur_cap colour),
+  plume (true or colour), sword (true), musket (true), rifle (true = a bolt-action rifle), quilted (true = padded winter coat), spear (true), robe (true = long robe),
+  skin (indian|european|afghan|east_asian|african), s (size, 0.7 = child)
   All figures are faceless low-poly; identity comes from clothing colours, hat, beard and the on-screen label.
-FACTIONS (armies): british, sepoy, french, portuguese, dutch, mughal, nawab, maratha, rajput, sikh, afghan, mysore, ancient, greek, modern_indian, rebels, civilians, generic
+FACTIONS (armies): british, sepoy, french, portuguese, dutch, mughal, nawab, maratha, rajput, sikh, afghan, mysore, ancient, greek, modern_indian, pla (alias: chinese), rebels, civilians, generic
 ACTIONS: stand, point, raise_sword, fight, salute, bow, kneel, walk, talk, wave, hold_letter, hold_scroll, read, celebrate, sit, defeated, turn_to_camera, look_down, think,
   shock, slump, nod, gesture, pray (namaste), beckon
-PROPS: cannon, barrel, crate, table, throne, letter, coins, chest, scroll, book, sword, shield, rock, cart, horse, elephant, flag, banner, candle, lamp, torch, campfire, pillar, crown, tree
-  (letter, coins, book, scroll, sword, crown, candle sit on the table automatically when the scene has a table)
-BUILDINGS: house, hut, temple, dome (mosque/tomb), palace, fort, wall, tower, gate, stupa, tent, ship, boat, well, bridge
-FLAG STYLES: eic (East India Company), union (British), tricolour (India), french, saffron (bhagwa), mughal (green), or any colour name / "#hex"
+PROPS: cannon, barrel, crate, table, throne, letter, coins, chest, scroll, book, sword, shield, rock, cart, horse, elephant, flag, banner, candle, lamp, torch, campfire, pillar, crown, tree,
+  rifle (lying on the ground), rifle_helmet (the soldier's memorial: rifle planted muzzle-down, helmet on the butt), helmet (steel helmet), sandbags (a small stack), ammo_crate (olive-green box), windsock
+  (letter, coins, book, scroll, sword, crown, candle sit on the table automatically when the scene has a table; props placed ON a trench rest on its floor)
+BUILDINGS: house, hut, temple, dome (mosque/tomb), palace, fort, wall, tower, gate, stupa, tent, ship, boat, well, bridge,
+  trench (dark channel between two sandbagged banks — soldiers placed on it stand waist-deep in it), sangar (crescent of dry-stone wall), hangar, airstrip (runway), aircraft (twin-engine transport plane, propellers spin)
+FLAG STYLES: eic (East India Company), union (British), tricolour (India), french, china (PRC), saffron (bhagwa), mughal (green), or any colour name / "#hex"
 FX: rain, lightning, smoke, fire, fog, dust, embers, snow, desaturate (colour drains in the 2nd half), sepia, shake, flash
 COLOUR NAMES: red, maroon, crimson, saffron, orange, yellow, gold, green, darkgreen, blue, navy, purple, white, black, grey, brown, pink, teal, cream, olive — or "#rrggbb"
+
+ASSET LIBRARY — everything the engine can draw today. Look HERE before you write "missing_assets": if it is listed, USE it and do not report it as missing.
+  HOW THE NEWER ASSETS BEHAVE
+  • mountain: snow ridge. Pair it with time "overcast" (flat grey cold light) or "dawn"; add fx "snow" for falling snow and "fog" for a whiteout yourself. For a blizzard use time "storm".
+  • airfield: the runway, hangar, control tower, tricolour pole and windsock are already there behind the action. Add "aircraft", tents and people in front of them.
+  • trench: film it from ABOVE (top_down, aerial, crane_up) to see inside it; from low_angle the near sandbag bank hides what is inside. For a "lone rifle in an empty trench" put a "rifle" prop and no characters on it.
+  • rifle_helmet: the memorial image (rifle planted muzzle-down, helmet on the butt) — a strong closing frame for a sacrifice story. "helmet" and "rifle" lying on the ground tell "someone was here and is gone" without showing anyone.
+  • pla / pla_soldier / pla_officer + flag "china": the Chinese army of 1962 (quilted khaki coat, fur cap with red badge, rifles). modern_soldier / modern_indian: Indian soldiers with steel helmets and rifles (not muskets).
+  • "frost":true on a character: the figure is frosted white and stands completely still. Three or four of them kneeling and standing in snow + fog is how to show "found frozen at their posts". Never show injury or bodies.
+  STORY KITS — which assets to reach for
+  • Mughal / Maratha / Rajput / Sikh / Afghan courts and battles: court (throne at "back"), fort, palace, tent; armies with elephants, cavalry, cannons, banners; the matching faction and character types.
+  • East India Company, 1757 and 1857: british, sepoy, french, dutch, portuguese factions; british_officer, british_official; ship, fort, tent; flags eic / union; room or tent for secret meetings.
+  • Freedom struggle: freedom_fighter, leader, crowd (with "colors"), village, city, temple; flag tricolour; a room for secret meetings.
+  • Wars of independent India (1947–1999): modern_soldier / modern_indian; mountain, hills, desert, airfield; trench, sangar, sandbags, ammo_crate, rifle, helmet, rifle_helmet, aircraft; flag tricolour; for the 1962 opponent use pla. For any other opponent use the closest faction with a coat/turban colour override.
+  • Ancient and classical: ancient and greek factions; stupa, temple, wall, gate; ancient_warrior, greek_soldier, sage, monk.
+  NOT AVAILABLE YET — use the substitute and list it in missing_assets
+  • tanks, jeeps, trucks, helicopters, jet fighters, trains, submarines, modern warships → closest: cart, aircraft (a transport plane), ship (a sailing ship), or say it in the narration and show soldiers.
+  • machine guns, mortars, radios, binoculars, medals, rank insignia → show soldiers with crate / rifle / sandbags and name the weapon in the narration and caption.
+  • specific monuments (Taj Mahal, Red Fort, Gateway of India, Qutub Minar, Jallianwala Bagh) → dome / fort / gate / tower with a "color" override, and name it with a title tape.
+  • real faces, portraits, readable writing on documents or signs, maps outside South Asia with real borders → characters with name_card; a "letter" prop; map with base "none" and places.
+  • animals other than horse and elephant (camels, mules, yaks) → horse, or leave them out.
 
 SPECIAL SETTINGS
   map:      {"base":"india" | "none",
@@ -175,7 +202,7 @@ COMPOSITION RULES (what looks good)
   6. Use map when places/routes matter, timeline when dates matter, card for one big number — together ≤ 20% of scenes.
   7. Max 4 light sources per scene (candle, lamp, torch, campfire, fire).
   8. No gore: fight, charge and defeated are fine; no blood or bodies.
-  9. If something cannot be shown (e.g. a specific monument), use the closest building/prop and add a line to missing_assets.
+  9. If something cannot be shown (e.g. a specific monument), use the closest building/prop and add a line to missing_assets — but look in the ASSET LIBRARY first and only list what is truly missing and matters to the story, with the substitute you used.
   10. Scene 1 (hook): motion from frame one (swoop_down / low_angle / fx flash), a red title, the key number as keyword.
   11. Every scene gets a keyword; a person's first appearance gets a name_card; a date that matters gets year.
   12. Use a "vs" card when the story is a contrast, a freeze when one person's choice is the turning point, arrows for movement on battlefields.
@@ -228,8 +255,8 @@ PRE-FLIGHT CHECKLIST (run silently on the finished scene list BEFORE printing th
   [ ] Every scene has a keyword; first appearance of a person has a name_card; every date that matters has a year.
   [ ] Troop movement has an arrow; numeric contrast has a "vs" card; the decision scene has ONE freeze.
   [ ] 2–4 deliberate sfx moments; ambience set where the automatic one would be wrong.
+  [ ] missing_assets lists ONLY things that are absent from the ASSET LIBRARY (and matter to the story), each with the substitute used. Nothing in the library is reported as missing.
   [ ] Valid JSON: double quotes, no comments, no trailing commas.
-
 
 --------------------------------------------------------------------------------
 TRANSCRIPT (relevant part)

@@ -20,6 +20,7 @@ Shorts-first: scripts default to 35–45 s with a seamless loop (last line flows
 
 Setup once: Chrome or Edge · Python 3.10+ · ffmpeg (`winget install Gyan.FFmpeg`) · `pip install playwright`.
 
-Examples: `L01-S01` Plassey Short · `L02-S04` Panipat Short · `DEMO-LONG` every scene type in 16:9.
+Examples: `L01-S01` Plassey Short · `L02-S04` Panipat Short · `DEMO-LONG` every scene type in 16:9 · `DEMO-ASSETS` the newest assets (snow ridge, trench, airfield, PLA, frozen soldiers).
+What the engine can draw today is listed in the ASSET LIBRARY section of `prompts/SCENE_FILE_REFERENCE.md` (and the copies inside Prompts 2 and 4). When you add a new asset to the engine, add it to that list too, so the AI uses it instead of reporting it as missing.
 Try the voice pipeline for free: `python tools/tts.py videos/L01-S01 --provider sarvam --mock` (silent placeholder audio at speaking pace).
 The full guide is also in this folder: History_Video_Studio_Guide.pdf
